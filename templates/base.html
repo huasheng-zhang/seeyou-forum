@@ -1,0 +1,181 @@
+{% load static %}
+{% load forum_extras %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}西游论坛 · Seeyou — 取经路上，与君共话{% endblock %}</title>
+<meta name="description" content="西游论坛 Seeyou — 一个以《西游记》为精神底色的图文社区。取经问道，花果山闲话，天宫广记，地府幽冥，龙宫宝藏，蓬莱仙岛。">
+<link rel="stylesheet" href="{% static 'styles.css' %}">
+{% block extra_head %}{% endblock %}
+</head>
+<body>
+
+{% block ticker %}
+<div class="ticker">
+  <div class="ticker-track">
+    <span>壬寅年 · 立秋 · 论坛第三百二十七期精华已收录</span>
+    <span>花果山版块本周话题：你心中的齐天大圣</span>
+    <span>蓬莱仙岛征稿：以墨写心，以文会友</span>
+    <span>新功能上线：长文阅读模式 · 古风排版</span>
+    <span>壬寅年 · 立秋 · 论坛第三百二十七期精华已收录</span>
+    <span>花果山版块本周话题：你心中的齐天大圣</span>
+    <span>蓬莱仙岛征稿：以墨写心，以文会友</span>
+    <span>新功能上线：长文阅读模式 · 古风排版</span>
+  </div>
+</div>
+{% endblock %}
+
+{% block nav %}
+<nav class="nav" id="nav">
+  <div class="wrap nav-inner">
+    <a href="{% url 'home' %}" class="nav-logo">
+      <div class="nav-logo-seal">游</div>
+      <div class="nav-logo-text">
+        <span class="cn">西游论坛</span>
+        <span class="en">Seeyou Forum</span>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="{% url 'home' %}" {% if active_nav == 'home' %}class="active"{% endif %}>首页</a>
+      <a href="{% url 'home' %}#boards" {% if active_nav == 'boards' %}class="active"{% endif %}>板块</a>
+      <a href="{% url 'home' %}#essence" {% if active_nav == 'essence' %}class="active"{% endif %}>精华</a>
+      <a href="{% url 'search' %}" {% if active_nav == 'search' %}class="active"{% endif %}>搜索</a>
+      <a href="{% url 'home' %}#cta" >活动</a>
+      <a href="{% url 'home' %}#about">关于</a>
+    </div>
+    <div class="nav-actions">
+      <a href="{% url 'search' %}" class="icon-btn" aria-label="搜索" title="搜索">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      </a>
+      {% if user.is_authenticated %}
+      <a href="{% url 'profile' user.username %}" class="icon-btn" aria-label="我的" title="我的主页">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </a>
+      <a href="{% url 'post_create' %}" class="nav-cta">发帖</a>
+      {% else %}
+      <a href="{% url 'login' %}" class="nav-cta">登录 · 注册</a>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+{% endblock %}
+
+{# 消息提示 #}
+{% if messages %}
+<div class="messages">
+  {% for message in messages %}
+  <div class="msg {{ message.tags }}">{{ message }}</div>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% block body %}{% endblock %}
+
+{% block footer %}
+<footer class="footer" id="about">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <div class="nav-logo-seal">游</div>
+          <div>
+            <div class="cn">西游论坛</div>
+            <div class="en">Seeyou Forum</div>
+          </div>
+        </div>
+        <p class="footer-desc">
+          一个以《西游记》为精神底色的图文社区。取经路上，与君共话。
+          我们相信文字与影像的力量，相信每一段路都值得被记录。
+        </p>
+        <div class="footer-social">
+          <a href="#" title="微博">微</a>
+          <a href="#" title="豆瓣">豆</a>
+          <a href="#" title="知乎">知</a>
+          <a href="#" title="RSS">RSS</a>
+          <a href="{% url 'login' %}" title="邮箱">@</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>洞天</h4>
+        <ul>
+          <li><a href="{% url 'board_detail' 'scripture' %}">取经问道 →</a></li>
+          <li><a href="{% url 'board_detail' 'flower-fruit' %}">花果山 →</a></li>
+          <li><a href="{% url 'board_detail' 'heavenly-annals' %}">天宫广记 →</a></li>
+          <li><a href="{% url 'board_detail' 'underworld' %}">地府幽冥 →</a></li>
+          <li><a href="{% url 'board_detail' 'dragon-treasury' %}">龙宫宝藏 →</a></li>
+          <li><a href="{% url 'board_detail' 'penglai' %}">蓬莱仙岛 →</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>指南</h4>
+        <ul>
+          <li><a href="{% url 'register' %}">新手入门 →</a></li>
+          <li><a href="{% url 'post_create' %}">开始发帖 →</a></li>
+          <li><a href="{% url 'home' %}#essence">精华标准 →</a></li>
+          <li><a href="{% url 'admin:index' %}">管理后台 →</a></li>
+          <li><a href="{% url 'search' %}">全文搜索 →</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>关于</h4>
+        <ul>
+          <li><a href="{% url 'home' %}#about">论坛纪事 →</a></li>
+          <li><a href="{% url 'home' %}#essence">雅集回顾 →</a></li>
+          <li><a href="#">隐私协议 →</a></li>
+          <li><a href="#">使用条款 →</a></li>
+          <li><a href="{% url 'login' %}">联系我们 →</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 壬寅年 西游论坛 Seeyou · 取经路上，与君共话</span>
+      <span class="seal-mini">西游论坛 · 印</span>
+      <span>MADE WITH 墨 · Django {{ django_version }}</span>
+    </div>
+  </div>
+</footer>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // 导航滚动变色
+  const nav = document.getElementById('nav');
+  if (nav) {
+    const onScroll = () => {
+      if (window.scrollY > 60) nav.classList.add('scrolled');
+      else nav.classList.remove('scrolled');
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+
+  // 滚动入场
+  const reveals = document.querySelectorAll('.reveal');
+  if (reveals.length) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    reveals.forEach(r => io.observe(r));
+  }
+
+  // 消息自动消失
+  const msgs = document.querySelectorAll('.messages .msg');
+  msgs.forEach(m => {
+    setTimeout(() => {
+      m.style.transition = 'opacity .4s, transform .4s';
+      m.style.opacity = '0';
+      m.style.transform = 'translateY(-12px)';
+      setTimeout(() => m.remove(), 400);
+    }, 4000);
+  });
+</script>
+{% endblock %}
+
+</body>
+</html>

@@ -1,0 +1,283 @@
+{% extends 'base.html' %}
+{% load forum_extras %}
+
+{% block body %}
+
+<!-- Hero -->
+<header class="hero">
+  <svg class="hero-deco-cloud" viewBox="0 0 400 200" fill="none" stroke="#c9a961" stroke-width="1.2">
+    <path d="M40,120 Q40,90 70,90 Q80,60 120,70 Q140,40 180,55 Q210,30 250,50 Q290,35 310,65 Q350,70 350,100 Q360,130 330,135 Q300,150 270,135 Q230,155 200,140 Q160,160 130,145 Q90,160 70,140 Q40,145 40,120 Z"/>
+    <path d="M80,100 Q90,85 110,90 M150,80 Q165,65 185,75 M240,70 Q255,55 275,65" stroke-width="1"/>
+  </svg>
+
+  <div class="hero-verse">敢问路在何方<br>路在脚下</div>
+  <div class="hero-deco-seal">取经<br>问道</div>
+
+  <div class="wrap hero-inner">
+    <div class="hero-eyebrow">EST. 壬寅年 · A Community of Words &amp; Images</div>
+
+    <h1 class="hero-title">
+      <span class="char">西</span><span class="char">游</span><span class="char">论</span><span class="char">坛</span><span class="accent-mark">游</span>
+    </h1>
+
+    <div class="hero-sub">
+      <span class="en">Seeyou Forum</span>
+      <span class="dot"></span>
+      <span class="tag">取经路上 · 与君共话</span>
+    </div>
+
+    <p class="hero-desc">
+      这里是一片以《西游记》为精神底色的图文旷野。我们谈论古典与当代，记录路上的风物与心象，
+      在文字与影像之间，寻一条属于自己的取经路。山高水远，不如坐下来说说话。
+    </p>
+
+    <form class="hero-search" action="{% url 'search' %}" method="get">
+      <input type="text" name="q" placeholder="搜索文章、作者、话题… 例如：孙悟空 反抗精神" value="{{ request.GET.q }}">
+      <button type="submit">
+        搜索
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </button>
+    </form>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="num">{{ stats.members|default:"0" }}</div>
+        <div class="label">取经人 · Members</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">{{ stats.posts|default:"0" }}</div>
+        <div class="label">真经 · Posts</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">{{ stats.boards|default:"6" }}</div>
+        <div class="label">洞天 · Boards</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">{{ stats.today_posts|default:"0" }}</div>
+        <div class="label">今日新帖</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- 板块导航 -->
+<section class="section categories" id="boards">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <div class="section-title-block">
+          <span class="section-num">壹 / I</span>
+          <h2 class="section-title">六<span class="red">洞</span>天</h2>
+        </div>
+        <p class="section-sub">Six Realms · 各觅其道，各归其山</p>
+      </div>
+    </div>
+
+    <div class="cat-grid reveal">
+      {% for board in boards %}
+      <a href="{% url 'board_detail' board.slug %}" class="cat-card">
+        <div class="cat-top">
+          <div class="cat-icon">{{ board.icon }}</div>
+          <div class="cat-arrow">→</div>
+        </div>
+        <div class="cat-name">{{ board.name }}</div>
+        <div class="cat-en">{{ board.en_name }}</div>
+        <p class="cat-desc">{{ board.description }}</p>
+        <div class="cat-meta">
+          <span>帖 <strong>{{ board.post_count }}</strong></span>
+          <span>今日 <strong>+{{ board.today_count }}</strong></span>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- 精华帖 -->
+<section class="section essence" id="essence">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <div class="section-title-block">
+          <span class="section-num">贰 / II</span>
+          <h2 class="section-title">本<span class="red">期</span>精华</h2>
+        </div>
+        <p class="section-sub">Curated Essence · 字字皆是取经路上的脚印</p>
+      </div>
+    </div>
+
+    <div class="essence-grid reveal">
+      {% if feature_post %}
+      <a href="{% url 'post_detail' feature_post.pk %}" class="essence-feature">
+        <div class="ef-img">
+          <span class="ef-badge">头版头条</span>
+          <img src="{{ feature_post.cover_image }}" alt="{{ feature_post.title }}">
+        </div>
+        <div class="ef-body">
+          <div class="ef-cat">{{ feature_post.board.name }} · 深度</div>
+          <h3 class="ef-title">{{ feature_post.title }}</h3>
+          <p class="ef-excerpt">{{ feature_post|excerpt_of:120 }}</p>
+          <div class="ef-foot">
+            <div class="ef-author">
+              <div class="ef-avatar">{{ feature_post.author.profile.avatar_char }}</div>
+              <div class="ef-author-info">
+                <div class="name">{{ feature_post.author.profile.display_name }}</div>
+                <div class="time">{{ feature_post.created_at|time_ago }} · 阅读 {{ feature_post.view_count }}</div>
+              </div>
+            </div>
+            <div class="ef-stats">
+              <span>♡ {{ feature_post.like_count }}</span>
+              <span>💬 {{ feature_post.comment_count }}</span>
+            </div>
+          </div>
+        </div>
+      </a>
+      {% else %}
+      <div class="empty-state" style="background:var(--ink-soft);border:1px solid var(--ink-wash);">
+        <div class="title" style="color:var(--paper);">精华待录</div>
+        <div class="desc" style="color:var(--text-mute);">尚无精华帖，期待你的第一篇。</div>
+      </div>
+      {% endif %}
+
+      <div class="essence-side">
+        {% for sp in side_posts %}
+        <a href="{% url 'post_detail' sp.pk %}" class="es-item">
+          <div class="es-num">{% widthratio forloop.counter0 1 2 %}{% if forloop.counter0 < 8 %}{{ forloop.counter|add:"1" }}{% endif %}</div>
+          <div class="es-body">
+            <div class="es-cat">{{ sp.board.name }}</div>
+            <h4 class="es-title">{{ sp.title }}</h4>
+            <div class="es-meta">
+              <span>{{ sp.author.profile.display_name }}</span>
+              <span>♡ {{ sp.like_count }}</span>
+            </div>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 最新讨论 -->
+<section class="section latest">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <div class="section-title-block">
+          <span class="section-num">叁 / III</span>
+          <h2 class="section-title">新<span class="red">帖</span>流转</h2>
+        </div>
+        <p class="section-sub">Latest Threads · 此刻论坛正在发生什么</p>
+      </div>
+      <a href="{% url 'search' %}" class="section-link">全部新帖 →</a>
+    </div>
+
+    <div class="latest-layout">
+      <div class="feed reveal">
+        {% for post in latest_posts %}
+        <a href="{% url 'post_detail' post.pk %}" class="feed-item">
+          <div class="feed-num">{% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }}</div>
+          <div class="feed-body">
+            <div class="feed-cat-line">
+              <span class="feed-cat">{{ post.board.name }}</span>
+              <span class="sep"></span>
+              <span class="feed-time">{{ post.created_at|time_ago }}</span>
+            </div>
+            <h3 class="feed-title">{{ post.title }}</h3>
+            <p class="feed-excerpt">{{ post|excerpt_of:100 }}</p>
+            <div class="feed-foot">
+              <div class="feed-author">
+                <div class="feed-avatar">{{ post.author.profile.avatar_char }}</div>
+                <span class="feed-author-name">{{ post.author.profile.display_name }}</span>
+              </div>
+              <div class="feed-stats">
+                <span>♡ {{ post.like_count }}</span>
+                <span>💬 {{ post.comment_count }}</span>
+                <span>★ {{ post.favorite_count }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="feed-thumb">
+            <img src="{{ post.cover_image }}" alt="{{ post.title }}">
+          </div>
+        </a>
+        {% empty %}
+        <div class="empty-state">
+          <div class="icon">空</div>
+          <div class="title">尚无新帖</div>
+          <div class="desc">山间寂静，等待第一声回响。</div>
+          <a href="{% url 'post_create' %}" class="btn">开始发帖</a>
+        </div>
+        {% endfor %}
+      </div>
+
+      <aside class="sidebar">
+        <div class="side-block reveal">
+          <div class="side-block-title">
+            <span class="ico">榜</span>
+            取经人榜
+          </div>
+          {% for u in top_users %}
+          <a href="{% url 'profile' u.user.username %}" class="rank-item" style="text-decoration:none;">
+            <span class="rank-pos">{{ forloop.counter }}</span>
+            <div class="rank-avatar">{{ u.avatar_char }}</div>
+            <div class="rank-info">
+              <div class="rank-name">{{ u.display_name }}</div>
+              <div class="rank-meta">{{ u.role }}</div>
+            </div>
+            <span class="rank-score">{{ u.score }}</span>
+          </a>
+          {% endfor %}
+        </div>
+
+        <div class="side-block reveal">
+          <div class="side-block-title">
+            <span class="ico">签</span>
+            热门话题
+          </div>
+          <div class="tag-cloud">
+            {% for tag in hot_tags %}
+            <a href="{% url 'search' %}?q={{ tag.name }}">{{ tag.name }}<span class="count">{{ tag.count }}</span></a>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="side-block reveal">
+          <div class="side-block-title">
+            <span class="ico">告</span>
+            论坛公告
+          </div>
+          {% for notice in notices %}
+          <div class="notice-item">
+            <span class="notice-tag">{{ notice.tag }}</span>
+            {% if notice.link %}<a href="{{ notice.link }}" class="notice-text">{% else %}<span class="notice-text">{% endif %}
+            {{ notice.content }}
+            {% if notice.link %}</a>{% else %}</span>{% endif %}
+          </div>
+          {% endfor %}
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- 行动召唤 -->
+<section class="cta-band" id="cta">
+  <div class="wrap cta-inner">
+    <h2 class="cta-title">山高水远<br>不如坐下来说说话</h2>
+    <p class="cta-sub">Join the journey · 十万八千里，从一行字开始</p>
+    {% if user.is_authenticated %}
+    <a href="{% url 'post_create' %}" class="cta-btn">
+      写下你的取经路
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+    </a>
+    {% else %}
+    <a href="{% url 'register' %}" class="cta-btn">
+      加入西游论坛
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+    </a>
+    {% endif %}
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load forum_extras %}
+
+{% block title %}{% if is_edit %}编辑 · {{ post.title }}{% else %}发帖 · 西游论坛{% endif %}{% endblock %}
+
+{% block body %}
+
+<section class="form-page">
+  <div class="wrap">
+    <div class="form-card">
+      <div class="form-card-head">
+        <h1>{% if is_edit %}编辑文章{% else %}写下你的取经路{% endif %}</h1>
+        <div class="sub">{% if is_edit %}Edit your journey{% else %}Begin a new journey{% endif %}</div>
+      </div>
+
+      <form method="post" novalidate>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+        <div class="form-error" style="margin-bottom: 20px;">
+          {% for e in form.non_field_errors %}<div>{{ e }}</div>{% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="form-field">
+          <label>{{ form.title.label }} <span class="req">*</span></label>
+          {{ form.title }}
+          {% if form.title.errors %}<div class="form-error">{{ form.title.errors|join:'；' }}</div>{% endif %}
+        </div>
+
+        <div class="form-field">
+          <label>{{ form.subtitle.label }}</label>
+          {{ form.subtitle }}
+          {% if form.subtitle.errors %}<div class="form-error">{{ form.subtitle.errors|join:'；' }}</div>{% endif %}
+        </div>
+
+        <div class="form-field">
+          <label>{{ form.board.label }} <span class="req">*</span></label>
+          {{ form.board }}
+          {% if form.board.errors %}<div class="form-error">{{ form.board.errors|join:'；' }}</div>{% endif %}
+        </div>
+
+        <div class="form-field">
+          <label>{{ form.excerpt.label }}</label>
+          {{ form.excerpt }}
+          <div class="form-help">留空将自动从正文截取</div>
+          {% if form.excerpt.errors %}<div class="form-error">{{ form.excerpt.errors|join:'；' }}</div>{% endif %}
+        </div>
+
+        <div class="form-field">
+          <label>{{ form.content.label }} <span class="req">*</span></label>
+          {{ form.content }}
+          <div class="form-help">支持 Markdown：## 标题 / &gt; 引用 / **加粗** / *斜体* / `代码` / ◆ 分隔</div>
+          {% if form.content.errors %}<div class="form-error">{{ form.content.errors|join:'；' }}</div>{% endif %}
+        </div>
+
+        <div class="form-field">
+          <label>{{ form.cover_url.label }}</label>
+          {{ form.cover_url }}
+          <div class="form-help">留空将使用默认水墨封面</div>
+          {% if form.cover_url.errors %}<div class="form-error">{{ form.cover_url.errors|join:'；' }}</div>{% endif %}
+        </div>
+
+        <div class="form-field">
+          <label>{{ form.tags_input.label }}</label>
+          {{ form.tags_input }}
+          <div class="form-help">{{ form.tags_input.help_text }}</div>
+          {% if form.tags_input.errors %}<div class="form-error">{{ form.tags_input.errors|join:'；' }}</div>{% endif %}
+        </div>
+
+        {% if user.is_staff %}
+        <div class="form-field">
+          <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+            {{ form.is_essence }}
+            <span>设为精华</span>
+          </label>
+          <div class="form-help">仅管理员可设置</div>
+        </div>
+        {% endif %}
+
+        <div class="form-actions">
+          <button type="submit" class="btn-submit">
+            {% if is_edit %}保存修改{% else %}发表文章{% endif %}
+          </button>
+          {% if is_edit %}
+          <a href="{% url 'post_detail' post.pk %}" class="btn-link">取消</a>
+          {% else %}
+          <a href="{% url 'home' %}" class="btn-link">返回首页</a>
+          {% endif %}
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}注册 · 西游论坛{% endblock %}
+
+{% block ticker %}{% endblock %}
+{% block nav %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block body %}
+
+<section class="auth-page">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="seal">游</div>
+      <div class="cn">西游论坛</div>
+      <div class="en">Seeyou Forum</div>
+    </div>
+
+    <h1 class="auth-title">入山 · 注册</h1>
+    <p class="auth-sub">Begin your journey, traveler</p>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+      <div class="form-error" style="margin-bottom: 20px; padding: 12px 16px; background: rgba(200,57,47,.08); border-left: 3px solid var(--vermillion);">
+        {% for e in form.non_field_errors %}<div>{{ e }}</div>{% endfor %}
+      </div>
+      {% endif %}
+
+      <div class="form-field">
+        <label>{{ form.username.label }} <span class="req">*</span></label>
+        {{ form.username }}
+        <div class="form-help">登录用，唯一不可重复</div>
+        {% if form.username.errors %}<div class="form-error">{{ form.username.errors|join:'；' }}</div>{% endif %}
+      </div>
+
+      <div class="form-field">
+        <label>{{ form.display_name.label }} <span class="req">*</span></label>
+        {{ form.display_name }}
+        <div class="form-help">笔名，将作为作者名展示</div>
+        {% if form.display_name.errors %}<div class="form-error">{{ form.display_name.errors|join:'；' }}</div>{% endif %}
+      </div>
+
+      <div class="form-field">
+        <label>{{ form.email.label }} <span class="req">*</span></label>
+        {{ form.email }}
+        {% if form.email.errors %}<div class="form-error">{{ form.email.errors|join:'；' }}</div>{% endif %}
+      </div>
+
+      <div class="form-field">
+        <label>{{ form.password1.label }} <span class="req">*</span></label>
+        {{ form.password1 }}
+        <div class="form-help">至少 8 位，含字母与数字</div>
+        {% if form.password1.errors %}<div class="form-error">{{ form.password1.errors|join:'；' }}</div>{% endif %}
+      </div>
+
+      <div class="form-field">
+        <label>{{ form.password2.label }} <span class="req">*</span></label>
+        {{ form.password2 }}
+        {% if form.password2.errors %}<div class="form-error">{{ form.password2.errors|join:'；' }}</div>{% endif %}
+      </div>
+
+      <div class="form-actions" style="flex-direction: column; align-items: stretch; gap: 12px;">
+        <button type="submit" class="btn-submit" style="width: 100%;">加入西游论坛</button>
+      </div>
+    </form>
+
+    <div class="auth-foot">
+      已有账号？<a href="{% url 'login' %}">前往登录</a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

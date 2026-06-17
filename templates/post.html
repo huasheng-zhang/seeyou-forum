@@ -1,0 +1,446 @@
+{% extends 'base.html' %}
+{% load forum_extras %}
+
+{% block title %}{{ post.title }} · 西游论坛{% endblock %}
+
+{% block body %}
+
+<!-- 文章头部 -->
+<header class="article-hero">
+  <div class="wrap">
+    <div class="article-breadcrumb">
+      <a href="{% url 'home' %}">首页</a>
+      <span class="sep">/</span>
+      <a href="{% url 'board_detail' post.board.slug %}">{{ post.board.name }}</a>
+      <span class="sep">/</span>
+      <a href="{% url 'board_detail' post.board.slug %}?sort=essence">深度</a>
+    </div>
+
+    <span class="article-cat-tag">{{ post.board.name }} · 深度</span>
+
+    <h1 class="article-title">{{ post.title }}</h1>
+    {% if post.subtitle %}<p class="article-subtitle">{{ post.subtitle }}</p>{% endif %}
+
+    <div class="article-meta">
+      <div class="article-author">
+        <div class="article-avatar {{ post.author.profile.avatar_class }}">{{ post.author.profile.avatar_char }}</div>
+        <div class="article-author-info">
+          <div class="name">{{ post.author.profile.display_name }}</div>
+          <div class="role">{{ post.author.profile.role }}</div>
+        </div>
+      </div>
+      <div class="article-meta-stats">
+        <span>👁 {{ post.view_count }}</span>
+        <span>♡ {{ post.like_count }}</span>
+        <span>💬 {{ post.comment_count }}</span>
+        <span>★ {{ post.favorite_count }}</span>
+        <span>{{ post.created_at|time_ago }}</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- 文章正文 -->
+<section class="article-body">
+  <div class="wrap">
+    <div class="article-layout">
+
+      <!-- 左侧分享 -->
+      <div class="article-share">
+        <button class="share-btn {% if liked %}active{% endif %}" id="shareLike" title="点赞" data-url="{% url 'api_like' post.pk %}">♡</button>
+        <button class="share-btn {% if favorited %}active{% endif %}" id="shareFav" title="收藏" data-url="{% url 'api_favorite' post.pk %}">★</button>
+        <a href="#comments" class="share-btn" title="评论">💬</a>
+        <button class="share-btn" title="分享" id="shareLink">↗</button>
+        <span class="share-label">SHARE</span>
+      </div>
+
+      <!-- 正文 -->
+      <article class="article-content">
+        {{ post.content|markdown }}
+
+        {% if post.tags.exists %}
+        <div class="ink-divider">◆ ◆ ◆</div>
+        <p style="text-indent:0; font-family: var(--font-mono); font-size: 12px; color: var(--text-mute); letter-spacing: .15em;">
+          标签：
+          {% for tag in post.tags.all %}
+            <a href="{% url 'search' %}?q={{ tag.name }}" style="color: var(--vermillion); margin-right: 8px;">#{{ tag.name }}</a>
+          {% endfor %}
+        </p>
+        {% endif %}
+
+        <p style="text-align: right; text-indent: 0; color: var(--text-mute); font-family: var(--font-display); font-size: 20px; margin-top: 40px;">
+          —— {{ post.author.profile.display_name }} · {{ post.created_at|date:"Y年m月d日" }}
+        </p>
+      </article>
+
+      <!-- 右侧目录 + 作者卡 -->
+      <aside class="article-aside">
+        <div class="toc-block">
+          <div class="toc-title"><span class="ico">目</span> 目录</div>
+          <ul class="toc-list" id="tocList">
+            <li><a href="#" class="active">引 · 反抗的形态</a></li>
+          </ul>
+        </div>
+
+        <div class="author-card">
+          <div class="ac-avatar {{ post.author.profile.avatar_class }}">{{ post.author.profile.avatar_char }}</div>
+          <div class="ac-name">{{ post.author.profile.display_name }}</div>
+          <div class="ac-role">{{ post.author.profile.role }}</div>
+          <p class="ac-bio">{{ post.author.profile.bio|default:"取经路上，与君共话。" }}</p>
+          <div class="ac-stats">
+            <div class="ac-stat">
+              <div class="n">{{ post.author.profile.post_count }}</div>
+              <div class="l">文章</div>
+            </div>
+            <div class="ac-stat">
+              <div class="n">{{ post.author.profile.follower_count }}</div>
+              <div class="l">关注</div>
+            </div>
+            <div class="ac-stat">
+              <div class="n">{{ post.author.profile.essence_count }}</div>
+              <div class="l">精华</div>
+            </div>
+          </div>
+          {% if user.is_authenticated and user != post.author %}
+          <button class="ac-follow {% if is_following %}following{% endif %}" id="acFollow" data-username="{{ post.author.username }}" data-url="{% url 'api_follow' post.author.username %}">
+            {% if is_following %}✓ 已关注{% else %}+ 关注作者{% endif %}
+          </button>
+          {% elif user.is_authenticated and user == post.author %}
+          <a href="{% url 'post_edit' post.pk %}" class="ac-follow" style="text-decoration:none; display:block;">编辑此文</a>
+          {% else %}
+          <a href="{% url 'login' %}?next={{ request.path }}" class="ac-follow" style="text-decoration:none; display:block;">登录后关注</a>
+          {% endif %}
+        </div>
+      </aside>
+
+    </div>
+
+    <!-- 文章底部交互 -->
+    <div class="article-actions">
+      <button class="action-btn primary {% if liked %}active{% endif %}" id="btnLike" data-url="{% url 'api_like' post.pk %}">
+        <span class="ico">♡</span> 赞同 <span id="likeCount">{{ post.like_count }}</span>
+      </button>
+      <button class="action-btn {% if favorited %}active{% endif %}" id="btnFav" data-url="{% url 'api_favorite' post.pk %}">
+        <span class="ico">★</span> 收藏 <span id="favCount">{{ post.favorite_count }}</span>
+      </button>
+      <a href="#comments" class="action-btn" style="text-decoration:none;">
+        <span class="ico">💬</span> 评论 {{ post.comment_count }}
+      </a>
+      <button class="action-btn" id="btnShare"><span class="ico">↗</span> 分享</button>
+    </div>
+
+    <!-- 作者其他文章 -->
+    {% if author_posts %}
+    <div style="margin-top: 56px; padding-top: 32px; border-top: 1px solid var(--paper-shadow);">
+      <div class="section-head reveal" style="margin-bottom: 24px;">
+        <div>
+          <div class="section-title-block">
+            <h2 class="section-title" style="font-size: 24px;">作者其他文章</h2>
+          </div>
+        </div>
+      </div>
+      <div class="essence-side">
+        {% for ap in author_posts %}
+        <a href="{% url 'post_detail' ap.pk %}" class="es-item">
+          <div class="es-num">{{ forloop.counter }}</div>
+          <div class="es-body">
+            <div class="es-cat">{{ ap.board.name }}</div>
+            <h4 class="es-title">{{ ap.title }}</h4>
+            <div class="es-meta">
+              <span>{{ ap.created_at|time_ago }}</span>
+              <span>♡ {{ ap.like_count }}</span>
+            </div>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- 相关帖子 -->
+    {% if related_posts %}
+    <div style="margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--paper-shadow);">
+      <div class="section-head reveal" style="margin-bottom: 24px;">
+        <div>
+          <div class="section-title-block">
+            <h2 class="section-title" style="font-size: 24px;">同板块相关</h2>
+          </div>
+        </div>
+      </div>
+      <div class="essence-side">
+        {% for rp in related_posts %}
+        <a href="{% url 'post_detail' rp.pk %}" class="es-item">
+          <div class="es-num">{{ forloop.counter }}</div>
+          <div class="es-body">
+            <div class="es-cat">{{ rp.board.name }}</div>
+            <h4 class="es-title">{{ rp.title }}</h4>
+            <div class="es-meta">
+              <span>{{ rp.author.profile.display_name }}</span>
+              <span>♡ {{ rp.like_count }}</span>
+            </div>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- 评论区 -->
+<section class="comments" id="comments">
+  <div class="wrap">
+    <div class="comments-head reveal">
+      <h2>取经人留言</h2>
+      <span class="count">{{ post.comment_count }}</span>
+    </div>
+
+    {% if user.is_authenticated %}
+    <form class="comment-form reveal" id="commentForm" method="post" action="{% url 'api_comment' post.pk %}">
+      {% csrf_token %}
+      <div class="cf-avatar">{{ current_profile.avatar_char }}</div>
+      <textarea name="content" id="cfContent" placeholder="且留一言，与君共话……（支持 Markdown 排版）" required></textarea>
+      <input type="hidden" name="parent_id" id="parentId" value="">
+      <button type="submit" class="cf-submit">发表</button>
+    </form>
+    {% else %}
+    <div class="comment-form reveal" style="display:block; text-align:center;">
+      <p style="font-family: var(--font-display); font-size: 18px; color: var(--text-ink); margin-bottom: 16px;">登录后即可留言</p>
+      <a href="{% url 'login' %}?next={{ request.path }}" class="btn-submit" style="display:inline-block; text-decoration:none;">前往登录</a>
+    </div>
+    {% endif %}
+
+    <div id="commentList">
+      {% for comment in top_comments %}
+      <div class="comment-item reveal">
+        <div class="comment-avatar {{ comment.author.profile.avatar_class }}">{{ comment.author.profile.avatar_char }}</div>
+        <div class="comment-body">
+          <div class="comment-head">
+            <span class="comment-name">
+              <a href="{% url 'profile' comment.author.username %}" style="text-decoration:none; color: inherit;">{{ comment.author.profile.display_name }}</a>
+            </span>
+            {% if comment.author == post.author %}<span class="comment-badge">作者</span>{% endif %}
+            <span class="comment-time">{{ comment.created_at|time_ago }}</span>
+          </div>
+          <p class="comment-text">{{ comment.content|linebreaksbr }}</p>
+          <div class="comment-foot">
+            <button>♡ {{ comment.like_count }}</button>
+            <button class="reply-btn" data-parent="{{ comment.id }}" data-name="{{ comment.author.profile.display_name }}">回复</button>
+          </div>
+        </div>
+      </div>
+
+      {% for reply in comment.replies.all %}
+      <div class="comment-item nested reveal">
+        <div class="comment-avatar {{ reply.author.profile.avatar_class }}">{{ reply.author.profile.avatar_char }}</div>
+        <div class="comment-body">
+          <div class="comment-head">
+            <span class="comment-name">
+              <a href="{% url 'profile' reply.author.username %}" style="text-decoration:none; color: inherit;">{{ reply.author.profile.display_name }}</a>
+            </span>
+            {% if reply.author == post.author %}<span class="comment-badge">作者</span>{% endif %}
+            <span class="comment-time">{{ reply.created_at|time_ago }}</span>
+          </div>
+          <p class="comment-text">{{ reply.content|linebreaksbr }}</p>
+          <div class="comment-foot">
+            <button>♡ {{ reply.like_count }}</button>
+            <button class="reply-btn" data-parent="{{ comment.id }}" data-name="{{ reply.author.profile.display_name }}">回复</button>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+      {% empty %}
+      <div class="empty-state">
+        <div class="icon">空</div>
+        <div class="title">尚无留言</div>
+        <div class="desc">山间寂静，等待第一声回响。</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<script>
+  // CSRF 全局
+  const csrftoken = document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
+
+  function apiPost(url, data) {
+    const body = new URLSearchParams();
+    for (const k in data) body.append(k, data[k]);
+    return fetch(url, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': csrftoken,
+        'X-Requested-With': 'XMLHttpRequest',
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body,
+    }).then(r => r.json());
+  }
+
+  // 点赞
+  const btnLike = document.getElementById('btnLike');
+  const shareLike = document.getElementById('shareLike');
+  const likeCount = document.getElementById('likeCount');
+  function bindLike(btn) {
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      apiPost(btn.dataset.url, {}).then(res => {
+        if (res.liked === undefined) return;
+        likeCount.textContent = res.count;
+        btnLike.classList.toggle('active', res.liked);
+        shareLike.classList.toggle('active', res.liked);
+        btnLike.style.transform = 'scale(0.92)';
+        setTimeout(() => btnLike.style.transform = '', 150);
+      });
+    });
+  }
+  bindLike(btnLike);
+
+  // 收藏
+  const btnFav = document.getElementById('btnFav');
+  const shareFav = document.getElementById('shareFav');
+  const favCount = document.getElementById('favCount');
+  if (btnFav) {
+    btnFav.addEventListener('click', () => {
+      apiPost(btnFav.dataset.url, {}).then(res => {
+        if (res.favorited === undefined) return;
+        favCount.textContent = res.count;
+        btnFav.classList.toggle('active', res.favorited);
+        shareFav.classList.toggle('active', res.favorited);
+        btnFav.style.transform = 'scale(0.92)';
+        setTimeout(() => btnFav.style.transform = '', 150);
+      });
+    });
+  }
+
+  // 左侧分享按钮同步
+  if (shareLike) shareLike.addEventListener('click', () => btnLike.click());
+  if (shareFav) shareFav.addEventListener('click', () => btnFav.click());
+
+  // 分享
+  const btnShare = document.getElementById('btnShare');
+  const shareLink = document.getElementById('shareLink');
+  function doShare() {
+    const url = window.location.href;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(url).then(() => alert('链接已复制：\n\n' + url));
+    } else {
+      prompt('复制链接：', url);
+    }
+  }
+  if (btnShare) btnShare.addEventListener('click', doShare);
+  if (shareLink) shareLink.addEventListener('click', doShare);
+
+  // 关注
+  const acFollow = document.getElementById('acFollow');
+  if (acFollow) {
+    acFollow.addEventListener('click', () => {
+      apiPost(acFollow.dataset.url, {}).then(res => {
+        if (res.following === undefined) {
+          alert(res.error || '操作失败');
+          return;
+        }
+        acFollow.classList.toggle('following', res.following);
+        acFollow.textContent = res.following ? '✓ 已关注' : '+ 关注作者';
+      });
+    });
+  }
+
+  // 评论提交
+  const commentForm = document.getElementById('commentForm');
+  const cfContent = document.getElementById('cfContent');
+  const parentIdInput = document.getElementById('parentId');
+  const commentList = document.getElementById('commentList');
+
+  if (commentForm) {
+    commentForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const content = cfContent.value.trim();
+      if (!content) { alert('且留一言，再行发表。'); return; }
+      apiPost(commentForm.action, {
+        content,
+        parent_id: parentIdInput.value,
+      }).then(res => {
+        if (!res.ok) {
+          alert('发表失败：' + JSON.stringify(res.errors));
+          return;
+        }
+        const c = res.comment;
+        const div = document.createElement('div');
+        div.className = 'comment-item' + (c.parent_id ? ' nested' : '');
+        div.innerHTML = `
+          <div class="comment-avatar ${c.avatar_class}">${c.avatar_char}</div>
+          <div class="comment-body">
+            <div class="comment-head">
+              <span class="comment-name">${c.author}</span>
+              <span class="comment-badge" style="display:none">作者</span>
+              <span class="comment-time">${c.time}</span>
+            </div>
+            <p class="comment-text">${c.content.replace(/</g,'&lt;').replace(/\n/g,'<br>')}</p>
+            <div class="comment-foot">
+              <button>♡ 0</button>
+              <button>回复</button>
+            </div>
+          </div>`;
+        if (c.parent_id) {
+          // 插入到父评论后
+          const parent = commentList.querySelector(`[data-parent="${c.parent_id}"]`)?.closest('.comment-item');
+          if (parent) parent.after(div);
+          else commentList.prepend(div);
+        } else {
+          commentList.prepend(div);
+        }
+        cfContent.value = '';
+        parentIdInput.value = '';
+        cfContent.placeholder = '且留一言，与君共话……（支持 Markdown 排版）';
+      });
+    });
+  }
+
+  // 回复按钮
+  document.querySelectorAll('.reply-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (!cfContent) return;
+      parentIdInput.value = btn.dataset.parent;
+      cfContent.placeholder = `回复 @${btn.dataset.name}：`;
+      cfContent.focus();
+      cfContent.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  });
+
+  // 目录自动生成
+  const tocList = document.getElementById('tocList');
+  const headings = document.querySelectorAll('.article-content h2, .article-content h3');
+  if (tocList && headings.length) {
+    tocList.innerHTML = '';
+    headings.forEach((h, i) => {
+      h.id = 'sec-' + i;
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.href = '#sec-' + i;
+      a.textContent = h.textContent;
+      if (i === 0) a.classList.add('active');
+      li.appendChild(a);
+      tocList.appendChild(li);
+    });
+    const tocLinks = tocList.querySelectorAll('a');
+    const tocIo = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          tocLinks.forEach(l => l.classList.remove('active'));
+          const active = Array.from(tocLinks).find(l => l.getAttribute('href') === '#' + e.target.id);
+          if (active) active.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    headings.forEach(h => tocIo.observe(h));
+  } else if (tocList) {
+    tocList.parentElement.style.display = 'none';
+  }
+</script>
+{% endblock %}
