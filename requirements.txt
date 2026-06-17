@@ -1,0 +1,22 @@
+# ============================================================
+# 西游论坛 Seeyou Forum — Python 依赖
+# ============================================================
+# Python 3.13+  |  Django 6.0+
+#
+# 安装：pip install -r requirements.txt
+# ============================================================
+
+# ---- Web 框架 ----
+Django==6.0.6
+
+# ---- 图像处理（Post.cover 字段 ImageField 依赖） ----
+Pillow==12.2.0
+
+# ---- 生产部署（可选，开发阶段无需） ----
+# gunicorn==23.0.0          # WSGI HTTP Server
+# whitenoise==6.9.0         # 静态文件服务
+# psycopg2-binary==2.9.10   # PostgreSQL 适配器
+
+# ---- Markdown 渲染（可选，本项目使用内置轻量渲染） ----
+# markdown==3.8             # 若需更完整的 Markdown 支持
+# bleach==6.2.0             # HTML 净化
