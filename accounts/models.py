@@ -1,4 +1,4 @@
-"""accounts/models.py — 用户资料与关注关系"""
+"""accounts/models.py — 用户资料、关注关系、私信"""
 from django.conf import settings
 from django.db import models
 
@@ -73,3 +73,33 @@ class Follow(models.Model):
 
     def __str__(self):
         return f'{self.follower.username} → {self.following.username}'
+
+
+class Message(models.Model):
+    """私信：仅限相互关注（互粉）的用户之间发送"""
+
+    sender = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='sent_messages',
+    )
+    recipient = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='received_messages',
+    )
+    content = models.TextField('内容', max_length=2000)
+    is_read = models.BooleanField('已读', default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = '私信'
+        verbose_name_plural = '私信'
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['recipient', 'is_read']),
+            models.Index(fields=['sender', 'recipient']),
+        ]
+
+    def __str__(self):
+        return f'{self.sender.username} → {self.recipient.username}：{self.content[:20]}'

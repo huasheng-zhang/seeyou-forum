@@ -9,4 +9,8 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('u/<str:username>/', views.profile_view, name='profile'),
     path('u/<str:username>/favorites/', views.favorites_view, name='favorites'),
+    # 私信
+    path('messages/', views.messages_inbox, name='messages_inbox'),
+    path('messages/<str:username>/', views.messages_conversation, name='messages_conversation'),
+    path('messages/<str:username>/send/', views.messages_send, name='messages_send'),
 ]

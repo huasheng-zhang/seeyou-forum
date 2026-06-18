@@ -50,6 +50,12 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
       </a>
       {% if user.is_authenticated %}
+      <a href="{% url 'messages_inbox' %}" class="icon-btn {% if active_nav == 'messages' %}active{% endif %}" aria-label="私信" title="私信">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        {% if unread_messages_count > 0 %}
+        <span class="nav-badge">{{ unread_messages_count }}</span>
+        {% endif %}
+      </a>
       <a href="{% url 'profile' user.username %}" class="icon-btn" aria-label="我的" title="我的主页">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       </a>

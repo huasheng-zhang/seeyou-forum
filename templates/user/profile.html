@@ -40,6 +40,9 @@
       {% if is_self %}
       <a href="{% url 'favorites' target_user.username %}" class="btn-edit" style="text-decoration:none; display:inline-block;">我的收藏</a>
       {% elif user.is_authenticated %}
+      {% if is_following and is_mutual %}
+      <a href="{% url 'messages_conversation' target_user.username %}" class="btn-edit" style="text-decoration:none; display:inline-block; margin-right:8px;">发私信</a>
+      {% endif %}
       <button class="btn-follow {% if is_following %}following{% endif %}" id="btnFollow" data-url="{% url 'api_follow' target_user.username %}">
         {% if is_following %}✓ 已关注{% else %}+ 关注{% endif %}
       </button>

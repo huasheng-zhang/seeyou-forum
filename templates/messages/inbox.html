@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load forum_extras %}
+
+{% block title %}私信 · 西游论坛{% endblock %}
+
+{% block body %}
+
+<header class="article-hero">
+  <div class="wrap">
+    <div class="article-breadcrumb">
+      <a href="{% url 'home' %}">首页</a>
+      <span class="sep">/</span>
+      <a href="{% url 'messages_inbox' %}">私信</a>
+    </div>
+    <span class="article-cat-tag">MESSAGES · 鸿雁传书</span>
+    <h1 class="article-title">私信</h1>
+    <p class="article-subtitle">取经路上，与君共话</p>
+  </div>
+</header>
+
+<section class="article-body">
+  <div class="wrap">
+    <div class="messages-layout">
+
+      <!-- 左侧：会话列表 -->
+      <aside class="msg-sidebar">
+        <div class="msg-sidebar-head">
+          <span>会话</span>
+          <a href="{% url 'messages_inbox' %}" class="msg-new-btn">+ 新会话</a>
+        </div>
+
+        {% if friends %}
+        <div class="msg-friends">
+          <div class="msg-friends-title">互粉好友（可发起会话）</div>
+          {% for f in friends %}
+          <a href="{% url 'messages_conversation' f.username %}" class="msg-friend-item">
+            <div class="msg-avatar {{ f.profile.avatar_class }}">{{ f.profile.avatar_char }}</div>
+            <div class="msg-friend-info">
+              <div class="msg-friend-name">{{ f.profile.display_name }}</div>
+              <div class="msg-friend-role">{{ f.profile.role }}</div>
+            </div>
+          </a>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="msg-conv-list">
+          {% for c in conversations %}
+          <a href="{% url 'messages_conversation' c.partner.username %}" class="msg-conv-item">
+            <div class="msg-avatar {{ c.partner.profile.avatar_class }}">{{ c.partner.profile.avatar_char }}</div>
+            <div class="msg-conv-body">
+              <div class="msg-conv-head">
+                <span class="msg-conv-name">{{ c.partner.profile.display_name }}</span>
+                <span class="msg-conv-time">{{ c.last_msg.created_at|time_ago }}</span>
+              </div>
+              <div class="msg-conv-preview">{{ c.last_msg.content|truncatechars:40 }}</div>
+              {% if c.unread_count > 0 %}
+              <span class="msg-conv-badge">{{ c.unread_count }}</span>
+              {% endif %}
+            </div>
+          </a>
+          {% empty %}
+          <div class="msg-empty">
+            <div class="icon">空</div>
+            <div class="title">尚无书信</div>
+            <div class="desc">互粉好友之间，方可鸿雁传书。</div>
+          </div>
+          {% endfor %}
+        </div>
+      </aside>
+
+      <!-- 右侧：欢迎/提示 -->
+      <div class="msg-main msg-welcome">
+        <div class="msg-welcome-inner">
+          <div class="msg-welcome-seal">书</div>
+          <h2>见信如晤</h2>
+          <p>从左侧选择一位取经人，开始你们的对话。</p>
+          <p class="msg-welcome-tip">提示：仅互相关注的好友可以发送私信。</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}

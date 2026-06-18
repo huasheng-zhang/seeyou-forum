@@ -447,10 +447,101 @@ ul { list-style: none; }
 .profile-action { margin-left: auto; }
 .profile-action .btn-follow { background: var(--vermillion); color: var(--paper); font-family: var(--font-title); font-size: 15px; letter-spacing: .15em; padding: 12px 32px; transition: background .25s ease; }
 .profile-action .btn-follow.following { background: var(--jade-deep); }
+.profile-action .btn-edit { background: var(--gold); color: var(--ink); font-family: var(--font-title); font-size: 15px; letter-spacing: .15em; padding: 12px 28px; transition: background .25s ease; }
+
+/* ============================================================
+   导航徽章
+   ============================================================ */
+.nav-actions .icon-btn { position: relative; }
+.nav-badge { position: absolute; top: -6px; right: -8px; background: var(--vermillion); color: var(--paper); font-family: var(--font-mono); font-size: 10px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 600; }
+
+/* ============================================================
+   私信 · 鸿雁传书
+   ============================================================ */
+.messages-layout { display: grid; grid-template-columns: 320px 1fr; gap: 24px; min-height: 600px; }
+
+.msg-sidebar { background: var(--paper); border: 1px solid var(--paper-shadow); border-radius: 4px; overflow: hidden; }
+.msg-sidebar-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--paper-shadow); font-family: var(--font-title); font-size: 16px; letter-spacing: .1em; }
+.msg-new-btn { font-family: var(--font-mono); font-size: 12px; color: var(--vermillion); text-decoration: none; letter-spacing: .1em; }
+.msg-new-btn:hover { color: var(--vermillion-bright); }
+
+.msg-friends { padding: 12px 0; border-bottom: 1px solid var(--paper-shadow); }
+.msg-friends-title { padding: 4px 20px; font-family: var(--font-mono); font-size: 10px; color: var(--text-mute); letter-spacing: .2em; text-transform: uppercase; }
+.msg-friend-item { display: flex; align-items: center; gap: 12px; padding: 10px 20px; text-decoration: none; color: var(--text-ink); transition: background .2s ease; }
+.msg-friend-item:hover { background: rgba(200,57,47,.04); }
+.msg-friend-item.active { background: rgba(200,57,47,.08); border-left: 3px solid var(--vermillion); padding-left: 17px; }
+.msg-friend-info .msg-friend-name { font-family: var(--font-title); font-size: 14px; }
+.msg-friend-info .msg-friend-role { font-family: var(--font-mono); font-size: 10px; color: var(--text-mute); letter-spacing: .1em; margin-top: 2px; }
+
+.msg-conv-list { padding: 8px 0; }
+.msg-conv-item { display: flex; gap: 12px; padding: 12px 20px; text-decoration: none; color: var(--text-ink); position: relative; transition: background .2s ease; border-left: 3px solid transparent; }
+.msg-conv-item:hover { background: rgba(200,57,47,.04); }
+.msg-conv-item.active { background: rgba(200,57,47,.08); border-left-color: var(--vermillion); }
+.msg-conv-body { flex: 1; min-width: 0; }
+.msg-conv-head { display: flex; justify-content: space-between; align-items: baseline; }
+.msg-conv-name { font-family: var(--font-title); font-size: 14px; }
+.msg-conv-time { font-family: var(--font-mono); font-size: 10px; color: var(--text-mute); }
+.msg-conv-preview { font-size: 12px; color: var(--text-mute); margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.msg-conv-badge { position: absolute; top: 14px; right: 16px; background: var(--vermillion); color: var(--paper); font-family: var(--font-mono); font-size: 10px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-weight: 600; }
+
+.msg-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-title); font-size: 16px; color: var(--paper); background: var(--vermillion); flex-shrink: 0; }
+.msg-avatar.dark { background: var(--ink); }
+.msg-avatar.jade { background: var(--jade-deep); }
+
+.msg-empty { padding: 40px 20px; text-align: center; }
+.msg-empty .icon { font-family: var(--font-display); font-size: 48px; color: var(--paper-shadow); margin-bottom: 12px; }
+.msg-empty .title { font-family: var(--font-title); font-size: 16px; color: var(--text-ink); margin-bottom: 6px; }
+.msg-empty .desc { font-size: 12px; color: var(--text-mute); line-height: 1.6; }
+.msg-empty-mini { padding: 24px; text-align: center; font-size: 12px; color: var(--text-mute); }
+
+/* 主对话区 */
+.msg-main { background: var(--paper); border: 1px solid var(--paper-shadow); border-radius: 4px; display: flex; flex-direction: column; min-height: 600px; }
+.msg-welcome { display: flex; align-items: center; justify-content: center; }
+.msg-welcome-inner { text-align: center; }
+.msg-welcome-seal { width: 80px; height: 80px; margin: 0 auto 24px; border-radius: 50%; background: var(--vermillion); color: var(--paper); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 36px; }
+.msg-welcome h2 { font-family: var(--font-display); font-size: 28px; color: var(--text-ink); margin-bottom: 12px; }
+.msg-welcome p { font-size: 14px; color: var(--text-mute); line-height: 1.8; }
+.msg-welcome-tip { margin-top: 8px; font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em; }
+
+.msg-chat-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; border-bottom: 1px solid var(--paper-shadow); }
+.msg-chat-user { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text-ink); }
+.msg-chat-name { font-family: var(--font-title); font-size: 16px; }
+.msg-chat-role { font-family: var(--font-mono); font-size: 10px; color: var(--text-mute); letter-spacing: .1em; margin-top: 2px; }
+.msg-chat-view { font-family: var(--font-mono); font-size: 12px; color: var(--vermillion); text-decoration: none; letter-spacing: .1em; }
+.msg-chat-view:hover { color: var(--vermillion-bright); }
+
+.msg-chat-body { flex: 1; padding: 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; max-height: 520px; }
+.msg-chat-empty { margin: auto; text-align: center; }
+.msg-chat-empty .icon { font-family: var(--font-display); font-size: 48px; color: var(--paper-shadow); margin-bottom: 12px; }
+.msg-chat-empty .title { font-family: var(--font-title); font-size: 16px; color: var(--text-ink); margin-bottom: 6px; }
+.msg-chat-empty .desc { font-size: 12px; color: var(--text-mute); }
+
+.msg-bubble { display: flex; gap: 10px; max-width: 70%; }
+.msg-bubble.mine { align-self: flex-end; flex-direction: row-reverse; }
+.msg-bubble.theirs { align-self: flex-start; }
+.msg-bubble-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-title); font-size: 14px; color: var(--paper); background: var(--vermillion); flex-shrink: 0; }
+.msg-bubble-avatar.dark { background: var(--ink); }
+.msg-bubble-avatar.jade { background: var(--jade-deep); }
+.msg-bubble-content { padding: 10px 14px; border-radius: 4px; }
+.msg-bubble.mine .msg-bubble-content { background: var(--vermillion); color: var(--paper); border-top-right-radius: 0; }
+.msg-bubble.theirs .msg-bubble-content { background: var(--paper-shadow); color: var(--text-ink); border-top-left-radius: 0; }
+.msg-bubble-text { font-size: 14px; line-height: 1.6; word-break: break-word; }
+.msg-bubble-time { font-family: var(--font-mono); font-size: 10px; margin-top: 4px; opacity: .7; }
+
+.msg-chat-form { display: flex; gap: 12px; padding: 16px 24px; border-top: 1px solid var(--paper-shadow); }
+.msg-chat-form textarea { flex: 1; resize: none; min-height: 44px; max-height: 120px; padding: 12px 16px; border: 1px solid var(--paper-shadow); background: var(--paper); color: var(--text-ink); font-family: var(--font-body); font-size: 14px; line-height: 1.6; outline: none; transition: border-color .2s ease; }
+.msg-chat-form textarea:focus { border-color: var(--vermillion); }
+.msg-send-btn { background: var(--vermillion); color: var(--paper); border: none; padding: 0 28px; font-family: var(--font-title); font-size: 14px; letter-spacing: .15em; cursor: pointer; transition: background .2s ease; }
+.msg-send-btn:hover { background: var(--vermillion-bright); }
+
+@media (max-width: 768px) {
+  .messages-layout { grid-template-columns: 1fr; }
+  .msg-sidebar { max-height: 280px; overflow-y: auto; }
+  .msg-bubble { max-width: 85%; }
+}
 .profile-action .btn-follow:hover { background: var(--vermillion-bright); }
 .profile-action .btn-follow.following:hover { background: var(--ink-wash); }
-.profile-action .btn-edit { background: transparent; color: var(--gold-bright); border: 1px solid var(--gold); font-family: var(--font-title); font-size: 15px; letter-spacing: .15em; padding: 11px 32px; }
-.profile-action .btn-edit:hover { background: var(--gold); color: var(--ink); }
+.profile-action .btn-edit:hover { background: var(--gold-bright); }
 
 /* 消息提示 */
 .messages { position: fixed; top: 90px; left: 50%; transform: translateX(-50%); z-index: 1000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
