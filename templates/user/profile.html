@@ -18,14 +18,14 @@
           <div class="n">{{ profile.post_count }}</div>
           <div class="l">文章 · Posts</div>
         </div>
-        <div class="stat">
+        <a href="{% url 'followers' target_user.username %}" class="stat stat-link">
           <div class="n">{{ profile.follower_count }}</div>
           <div class="l">粉丝 · Followers</div>
-        </div>
-        <div class="stat">
+        </a>
+        <a href="{% url 'following' target_user.username %}" class="stat stat-link">
           <div class="n">{{ profile.following_count }}</div>
           <div class="l">关注 · Following</div>
-        </div>
+        </a>
         <div class="stat">
           <div class="n">{{ profile.essence_count }}</div>
           <div class="l">精华 · Essence</div>

@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% load forum_extras %}
+
+{% block title %}{{ target_user.profile.display_name }} · {% if list_type == 'followers' %}粉丝{% else %}关注{% endif %} · 西游论坛{% endblock %}
+
+{% block body %}
+
+<header class="profile-hero">
+  <div class="wrap profile-inner">
+    <div class="profile-avatar-lg {{ target_user.profile.avatar_class }}">{{ target_user.profile.avatar_char }}</div>
+    <div class="profile-meta">
+      <div class="name">{{ target_user.profile.display_name }}</div>
+      <div class="role">
+        {% if list_type == 'followers' %}FOLLOWERS · 粉丝明细{% else %}FOLLOWING · 关注明细{% endif %}
+      </div>
+      <div class="profile-stats">
+        <div class="stat">
+          <a href="{% url 'followers' target_user.username %}" class="stat-link {% if list_type == 'followers' %}active{% endif %}">
+            <div class="n">{{ target_user.profile.follower_count }}</div>
+            <div class="l">粉丝</div>
+          </a>
+        </div>
+        <div class="stat">
+          <a href="{% url 'following' target_user.username %}" class="stat-link {% if list_type == 'following' %}active{% endif %}">
+            <div class="n">{{ target_user.profile.following_count }}</div>
+            <div class="l">关注</div>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="profile-action">
+      <a href="{% url 'profile' target_user.username %}" class="btn-edit" style="text-decoration:none; display:inline-block;">返回主页</a>
+    </div>
+  </div>
+</header>
+
+<section class="article-body">
+  <div class="wrap">
+    <div class="follow-grid">
+      {% for u in users %}
+      <div class="follow-card reveal">
+        <a href="{% url 'profile' u.username %}" class="follow-card-avatar {{ u.profile.avatar_class }}">{{ u.profile.avatar_char }}</a>
+        <div class="follow-card-body">
+          <a href="{% url 'profile' u.username %}" class="follow-card-name">{{ u.profile.display_name }}</a>
+          <div class="follow-card-role">{{ u.profile.role }}</div>
+          {% if u.profile.bio %}<div class="follow-card-bio">{{ u.profile.bio|truncatechars:60 }}</div>{% endif %}
+          <div class="follow-card-stats">
+            <span>{{ u.profile.post_count }} 文</span>
+            <span>{{ u.profile.follower_count }} 粉</span>
+          </div>
+        </div>
+        <div class="follow-card-action">
+          {% if request.user.is_authenticated and u != request.user %}
+          {% if u.id in following_ids %}
+          <button class="btn-follow-sm following" data-url="{% url 'api_follow' u.username %}">✓ 已关注</button>
+          {% else %}
+          <button class="btn-follow-sm" data-url="{% url 'api_follow' u.username %}">+ 关注</button>
+          {% endif %}
+          {% endif %}
+        </div>
+      </div>
+      {% empty %}
+      <div class="empty-state">
+        <div class="icon">空</div>
+        <div class="title">{% if list_type == 'followers' %}暂无粉丝{% else %}尚未关注任何人{% endif %}</div>
+        <div class="desc">{% if list_type == 'followers' %}山间寂静，等待第一声回响。{% else %}去逛逛论坛，发现有趣的取经人。{% endif %}</div>
+      </div>
+      {% endfor %}
+    </div>
+
+    {% if users.has_other_pages %}
+    <div class="pagination">
+      {% if users.has_previous %}
+      <a href="?page={{ users.previous_page_number }}" class="prev">← 上一页</a>
+      {% else %}
+      <span class="prev disabled">← 上一页</span>
+      {% endif %}
+      {% for n in users.paginator.page_range %}
+        {% if users.number == n %}
+        <span class="page current">{{ n }}</span>
+        {% elif n > users.number|add:'-3' and n < users.number|add:'3' %}
+        <a href="?page={{ n }}" class="page">{{ n }}</a>
+        {% elif n == 1 or n == users.paginator.num_pages %}
+        <a href="?page={{ n }}" class="page">{{ n }}</a>
+        {% elif n == 2 or n == users.paginator.num_pages|add:'-1' %}
+        <span class="ellipsis">…</span>
+        {% endif %}
+      {% endfor %}
+      {% if users.has_next %}
+      <a href="?page={{ users.next_page_number }}" class="next">下一页 →</a>
+      {% else %}
+      <span class="next disabled">下一页 →</span>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<script>
+  const csrftoken = document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
+  document.querySelectorAll('.btn-follow-sm').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const body = new URLSearchParams();
+      fetch(btn.dataset.url, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': csrftoken,
+          'X-Requested-With': 'XMLHttpRequest',
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body,
+      }).then(r => r.json()).then(res => {
+        if (res.following === undefined) return;
+        btn.classList.toggle('following', res.following);
+        btn.textContent = res.following ? '✓ 已关注' : '+ 关注';
+      });
+    });
+  });
+</script>
+{% endblock %}

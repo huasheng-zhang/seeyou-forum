@@ -121,6 +121,62 @@ def favorites_view(request, username):
     })
 
 
+def followers_view(request, username):
+    """粉丝列表"""
+    user = get_object_or_404(User, username=username)
+    followers = (
+        User.objects.filter(following_set__following=user)
+        .select_related('profile')
+        .order_by('profile__display_name')
+    )
+    paginator = Paginator(followers, 20)
+    page = paginator.get_page(request.GET.get('page'))
+
+    # 判断当前登录用户是否关注了列表中的用户
+    following_ids = set()
+    if request.user.is_authenticated:
+        following_ids = set(
+            Follow.objects.filter(follower=request.user)
+            .values_list('following_id', flat=True)
+        )
+
+    return render(request, 'user/follow_list.html', {
+        'target_user': user,
+        'users': page,
+        'following_ids': following_ids,
+        'list_type': 'followers',
+        'active_nav': 'profile',
+    })
+
+
+def following_view(request, username):
+    """关注列表"""
+    user = get_object_or_404(User, username=username)
+    following = (
+        User.objects.filter(follower_set__follower=user)
+        .select_related('profile')
+        .order_by('profile__display_name')
+    )
+    paginator = Paginator(following, 20)
+    page = paginator.get_page(request.GET.get('page'))
+
+    # 判断当前登录用户是否关注了列表中的用户
+    following_ids = set()
+    if request.user.is_authenticated:
+        following_ids = set(
+            Follow.objects.filter(follower=request.user)
+            .values_list('following_id', flat=True)
+        )
+
+    return render(request, 'user/follow_list.html', {
+        'target_user': user,
+        'users': page,
+        'following_ids': following_ids,
+        'list_type': 'following',
+        'active_nav': 'profile',
+    })
+
+
 # ============================================================
 # 私信
 # ============================================================

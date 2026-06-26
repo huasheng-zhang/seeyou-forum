@@ -444,6 +444,9 @@ ul { list-style: none; }
 .profile-stats { display: flex; gap: clamp(24px, 4vw, 48px); margin-top: 24px; }
 .profile-stats .stat .n { font-family: var(--font-en); font-size: 28px; color: var(--gold-bright); font-weight: 500; }
 .profile-stats .stat .l { font-family: var(--font-mono); font-size: 10px; color: var(--text-mute); letter-spacing: .2em; text-transform: uppercase; margin-top: 4px; }
+.profile-stats .stat-link { text-decoration: none; color: inherit; display: block; cursor: pointer; transition: opacity .2s ease; }
+.profile-stats .stat-link:hover { opacity: .7; }
+.profile-stats .stat-link.active .n { color: var(--vermillion); }
 .profile-action { margin-left: auto; }
 .profile-action .btn-follow { background: var(--vermillion); color: var(--paper); font-family: var(--font-title); font-size: 15px; letter-spacing: .15em; padding: 12px 32px; transition: background .25s ease; }
 .profile-action .btn-follow.following { background: var(--jade-deep); }
@@ -571,6 +574,26 @@ ul { list-style: none; }
 .nav-dropdown-logout { color: var(--vermillion); }
 .nav-dropdown-logout:hover { background: rgba(200,57,47,.08); }
 .nav-dropdown-logout svg { stroke: var(--vermillion); opacity: 1; }
+
+/* ============================================================
+   关注/粉丝列表
+   ============================================================ */
+.follow-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+.follow-card { display: flex; align-items: center; gap: 16px; padding: 20px; background: var(--paper); border: 1px solid var(--paper-shadow); border-radius: 4px; transition: box-shadow .2s ease; }
+.follow-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.08); }
+.follow-card-avatar { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-title); font-size: 22px; color: var(--paper); background: var(--vermillion); flex-shrink: 0; text-decoration: none; }
+.follow-card-avatar.dark { background: var(--ink); }
+.follow-card-avatar.jade { background: var(--jade-deep); }
+.follow-card-body { flex: 1; min-width: 0; }
+.follow-card-name { font-family: var(--font-title); font-size: 16px; color: var(--text-ink); text-decoration: none; letter-spacing: .04em; }
+.follow-card-name:hover { color: var(--vermillion); }
+.follow-card-role { font-family: var(--font-mono); font-size: 10px; color: var(--text-mute); letter-spacing: .1em; margin-top: 2px; }
+.follow-card-bio { font-size: 12px; color: var(--text-mute); line-height: 1.6; margin-top: 6px; }
+.follow-card-stats { font-family: var(--font-mono); font-size: 10px; color: var(--gold); letter-spacing: .1em; margin-top: 6px; display: flex; gap: 12px; }
+.follow-card-action { flex-shrink: 0; }
+.btn-follow-sm { background: var(--vermillion); color: var(--paper); border: none; padding: 6px 16px; font-family: var(--font-title); font-size: 12px; letter-spacing: .1em; cursor: pointer; transition: background .2s ease; }
+.btn-follow-sm.following { background: var(--jade-deep); }
+.btn-follow-sm:hover { opacity: .85; }
 
 /* 消息提示 */
 .messages { position: fixed; top: 90px; left: 50%; transform: translateX(-50%); z-index: 1000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
