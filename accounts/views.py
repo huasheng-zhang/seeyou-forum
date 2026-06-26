@@ -314,7 +314,7 @@ def messages_conversation(request, username):
 
     return render(request, 'messages/conversation.html', {
         'partner': partner,
-        'messages': page,
+        'msg_list': page,
         'friends': friends,
         'conversations': conversations,
         'active_nav': 'messages',

@@ -81,7 +81,7 @@
         </div>
 
         <div class="msg-chat-body" id="chatBody">
-          {% for m in messages %}
+          {% for m in msg_list %}
           <div class="msg-bubble {% if m.sender == request.user %}mine{% else %}theirs{% endif %}">
             <div class="msg-bubble-avatar {{ m.sender.profile.avatar_class }}">{{ m.sender.profile.avatar_char }}</div>
             <div class="msg-bubble-content">
