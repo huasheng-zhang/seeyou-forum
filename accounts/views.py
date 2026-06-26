@@ -35,9 +35,10 @@ def register_view(request):
 
 
 def login_view(request):
-    """登录"""
+    """登录（已登录用户访问时先登出，再显示登录页）"""
     if request.user.is_authenticated:
-        return redirect('home')
+        logout(request)
+        messages.info(request, '已登出，请重新登录。')
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
