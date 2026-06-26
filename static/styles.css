@@ -543,6 +543,35 @@ ul { list-style: none; }
 .profile-action .btn-follow.following:hover { background: var(--ink-wash); }
 .profile-action .btn-edit:hover { background: var(--gold-bright); }
 
+/* ============================================================
+   用户下拉菜单
+   ============================================================ */
+.nav-user { position: relative; }
+.nav-user-btn { display: flex; align-items: center; gap: 6px; background: none; border: none; cursor: pointer; padding: 4px; color: var(--text-ink); }
+.nav-user-btn:hover { opacity: .85; }
+.nav-user-avatar { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-title); font-size: 13px; color: var(--paper); background: var(--vermillion); }
+.nav-user-avatar.dark { background: var(--ink); }
+.nav-user-avatar.jade { background: var(--jade-deep); }
+
+.nav-dropdown { position: absolute; top: 100%; right: 0; margin-top: 8px; width: 220px; background: var(--paper); border: 1px solid var(--paper-shadow); box-shadow: 0 8px 32px rgba(0,0,0,.15); z-index: 200; opacity: 0; visibility: hidden; transform: translateY(-8px); transition: opacity .2s ease, transform .2s ease, visibility .2s; }
+.nav-dropdown.open { opacity: 1; visibility: visible; transform: translateY(0); }
+
+.nav-dropdown-head { display: flex; align-items: center; gap: 12px; padding: 16px; border-bottom: 1px solid var(--paper-shadow); }
+.nav-dropdown-head .nav-user-avatar { width: 36px; height: 36px; font-size: 16px; }
+.nav-dropdown-name { font-family: var(--font-title); font-size: 15px; color: var(--text-ink); }
+.nav-dropdown-role { font-family: var(--font-mono); font-size: 10px; color: var(--text-mute); letter-spacing: .1em; margin-top: 2px; }
+
+.nav-dropdown-item { display: flex; align-items: center; gap: 10px; padding: 10px 16px; text-decoration: none; color: var(--text-ink); font-family: var(--font-title); font-size: 13px; letter-spacing: .06em; transition: background .15s ease; position: relative; }
+.nav-dropdown-item:hover { background: rgba(200,57,47,.05); }
+.nav-dropdown-item svg { flex-shrink: 0; opacity: .6; }
+.nav-dropdown-badge { position: absolute; right: 14px; background: var(--vermillion); color: var(--paper); font-family: var(--font-mono); font-size: 10px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 600; }
+
+.nav-dropdown-divider { height: 1px; background: var(--paper-shadow); margin: 4px 0; }
+
+.nav-dropdown-logout { color: var(--vermillion); }
+.nav-dropdown-logout:hover { background: rgba(200,57,47,.08); }
+.nav-dropdown-logout svg { stroke: var(--vermillion); opacity: 1; }
+
 /* 消息提示 */
 .messages { position: fixed; top: 90px; left: 50%; transform: translateX(-50%); z-index: 1000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
 .messages .msg { background: var(--ink); color: var(--paper); padding: 14px 28px; font-family: var(--font-title); font-size: 14px; letter-spacing: .08em; border-left: 3px solid var(--vermillion); box-shadow: 0 8px 24px rgba(0,0,0,.2); animation: msgIn .4s cubic-bezier(.2,.8,.2,1); pointer-events: auto; }

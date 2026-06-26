@@ -56,9 +56,43 @@
         <span class="nav-badge">{{ unread_messages_count }}</span>
         {% endif %}
       </a>
-      <a href="{% url 'profile' user.username %}" class="icon-btn" aria-label="我的" title="我的主页">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      </a>
+      <div class="nav-user" id="navUser">
+        <button class="nav-user-btn" id="navUserBtn" aria-label="用户菜单" title="{{ current_profile.display_name }}">
+          <div class="nav-user-avatar {{ current_profile.avatar_class }}">{{ current_profile.avatar_char }}</div>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="nav-dropdown" id="navDropdown">
+          <div class="nav-dropdown-head">
+            <div class="nav-user-avatar {{ current_profile.avatar_class }}">{{ current_profile.avatar_char }}</div>
+            <div>
+              <div class="nav-dropdown-name">{{ current_profile.display_name }}</div>
+              <div class="nav-dropdown-role">{{ current_profile.role }}</div>
+            </div>
+          </div>
+          <a href="{% url 'profile' user.username %}" class="nav-dropdown-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            我的主页
+          </a>
+          <a href="{% url 'favorites' user.username %}" class="nav-dropdown-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            我的收藏
+          </a>
+          <a href="{% url 'messages_inbox' %}" class="nav-dropdown-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            私信
+            {% if unread_messages_count > 0 %}<span class="nav-dropdown-badge">{{ unread_messages_count }}</span>{% endif %}
+          </a>
+          <div class="nav-dropdown-divider"></div>
+          <a href="{% url 'login' %}" class="nav-dropdown-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+            切换账号
+          </a>
+          <a href="{% url 'logout' %}" class="nav-dropdown-item nav-dropdown-logout">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            登出
+          </a>
+        </div>
+      </div>
       <a href="{% url 'post_create' %}" class="nav-cta">发帖</a>
       {% else %}
       <a href="{% url 'login' %}" class="nav-cta">登录 · 注册</a>
@@ -154,6 +188,22 @@
       else nav.classList.remove('scrolled');
     };
     window.addEventListener('scroll', onScroll, { passive: true });
+  }
+
+  // 用户下拉菜单
+  const navUserBtn = document.getElementById('navUserBtn');
+  const navDropdown = document.getElementById('navDropdown');
+  if (navUserBtn && navDropdown) {
+    navUserBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navDropdown.classList.toggle('open');
+    });
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('#navUser')) navDropdown.classList.remove('open');
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') navDropdown.classList.remove('open');
+    });
   }
 
   // 滚动入场
